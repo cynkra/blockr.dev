@@ -70,16 +70,22 @@
 
 ### Phase 4: Pull Request Creation
 
-8. **Commit**
+8. **Verify before committing**
+   - **MANDATORY**: Run `devtools::check()` and ensure clean results (0 errors, 0 warnings, 0 notes)
+   - All tests must pass
+   - All code must pass linting checks
+   - **NO CODE MAY BE PUSHED WITHOUT CLEAN CHECK RESULTS**
+
+9. **Commit**
    - Create atomic commits with descriptive messages
    - Use imperative mood ("Add feature" not "Added feature")
    - Keep commits focused on logical units of work
    - **DO NOT include "Co-Authored-By" comments**
 
-9. **Push branch**
-   - `git push -u origin {issue-number}-{descriptor}`
+10. **Push branch**
+    - `git push -u origin {issue-number}-{descriptor}`
 
-10. **Create pull request**
+11. **Create pull request**
     - Title: Clear, concise description of what was added/changed
     - Description:
       - Summarize what changed

@@ -8,7 +8,8 @@ options(
     paste(getRversion(), R.version[["platform"]], R.version[["arch"]], R.version[["os"]])
   ),
   shiny.port = 3838L,
-  shiny.host = "0.0.0.0"
+  shiny.host = "0.0.0.0",
+  browser = function(url) message("App running at ", url)
 )
 
 if (file.exists(".Rprofile.local")) {
