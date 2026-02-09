@@ -124,24 +124,80 @@ See [design/core/roclet.md](/workspace/design/core/roclet.md) for a complete exa
       }
     )
     ```
-- Minimize comments - only use when something is truly unexpected/unintuitive and might cause future issues
+
+- **Write readable code, not commented code**
+  - Use descriptive variable and function names that make the code self-documenting
+  - Avoid descriptive comments that simply restate what the code does
+  - **BAD**: `# Get constructor name` followed by `ctor_name <- ...`
+  - **GOOD**: Just `ctor_name <- ...` (the variable name already says what it is)
+  - **BAD**: `# Validate required tags` followed by validation code
+  - **GOOD**: Just the validation code (it's obvious that's what it does)
+  - Only add comments when:
+    - Something unexpected or non-obvious is happening
+    - There's important context that isn't clear from the code itself
+    - Future maintainers might be confused without explanation
+  - Section divider comments (e.g., `# Tag parsers ------`) are unnecessary - organize code with blank lines instead
+
+- **Avoid assignment just to return**
+  - Don't assign to a variable only to return it on the next line
+  - **BAD**: `result <- finalize(x)` followed by `result`
+  - **GOOD**: Just `finalize(x)` as the last expression
+  - Only assign if you need to use the value multiple times or for debugging
+
+- **Use vertical white-space for logical grouping**
+  - Add blank lines to create logical groups of related statements
+  - Makes code easier to read and understand the flow
+  - Aim for aesthetically pleasing, well-organized code
+  - **Rule of thumb**: After an opening `{` (function body, if-statement, etc.), add a blank line
+    - Exception: Skip the blank line for short 1-2 line bodies
+  - Examples:
+    ```r
+    # GOOD: Multi-line function with blank line after {
+    process_data <- function(x) {
+
+      validated <- validate_input(x)
+      transformed <- transform(validated)
+
+      finalize(transformed)
+    }
+
+    # GOOD: Short function, no blank line needed
+    get_name <- function(x) {
+      x$name
+    }
+
+    # GOOD: Multi-line if with blank line, grouping related logic
+    if (is.null(ctor_name)) {
+
+      ctor_name <- block$object$alias %||% block$object$topic
+
+      if (is.null(ctor_name)) {
+        if (!is.null(block$call)) {
+          ctor_name <- as.character(block$call[[2L]])
+        }
+      }
+    }
+    ```
+
+- **Linting is a strict requirement before committing** - all code must pass `lintr::lint()` checks
+
+## Documentation Principles
+
+Follow package conventions when documenting functions:
+
+- **Group related documentation**: Use `@rdname` to group related functions in the same help file
+  - Example: `register_package_blocks()` belongs with `register_block()` and `register_blocks()`
+  - Related functions should share documentation rather than creating separate help files
+  - This makes it easier for users to discover related functionality
+
+- **Avoid over-documenting**: Simple wrapper functions or helpers may not need extensive separate documentation
+  - If a function is straightforward, consider grouping it with related functions
+  - Focus documentation effort on the primary user-facing functions
+
+- **Use succinct names for separate help files**: If a function needs its own Rd file, use a 2-word name
+  - Use the `@name` directive to control the Rd filename independently of the function name
+  - Example: `@name block-roclet` creates `block-roclet.Rd` even if the function is `block_registration_roclet()`
 
 ## Testing
 
 **IMPORTANT**: Always run and verify tests work before claiming they're complete. Don't be optimistic about test code - actually execute it to catch failures.
-
-## Linting
-
-Fixed major linting issues in blockr.session:
-- Used `styler::style_file()` to automatically fix most formatting issues
-- Fixed brace placement, semicolon usage, and indentation
-- Added trailing newlines to all files
-- Some remaining line length issues with embedded JavaScript strings are acceptable
-
-**Testing Best Practices**:
-- Use proper testthat setup: run `devtools::test()` from package directory, not `test_file()` with manual library loading
-- When using proper testthat setup, imported package functions are available without namespace prefixes (e.g., `is_plugin()` not `blockr.core::is_plugin()`)
-- Follow the same patterns as existing package tests - check NAMESPACE imports and test structure
-- Don't use `skip_if_not_installed()` for hard dependencies listed in DESCRIPTION
-
-To run tests, navigate to the package directory and use `devtools::test()`.
