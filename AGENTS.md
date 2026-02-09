@@ -13,7 +13,7 @@
    - Gather full context before proposing solutions
 
 2. **Design document drafting**
-   - Create a comprehensive design document in `/workspace/design/{package}/{feature}.md`
+   - Create a comprehensive design document in `design/{package}/{feature}.md`
    - Document must cover:
      - Problem statement and motivation
      - Proposed solution with detailed API design

@@ -3,6 +3,8 @@
 
 # Except AGENTS.md
 !/AGENTS.md
+!/README.md
+!/design/
 
 # Ignore these dotfiles/dotdirs
 .claude/
