@@ -1,0 +1,5 @@
+[core]
+	excludesFile = /workspace/.devcontainer/gitignore_global
+
+[include]
+	path = /workspace/.devcontainer/.gitconfig.local

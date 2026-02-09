@@ -1,0 +1,14 @@
+# Ignore everything at root not starting with "."
+/[^.]*
+
+# Except AGENTS.md
+!/AGENTS.md
+
+# Ignore these dotfiles/dotdirs
+.claude/
+.library/
+.DS_Store
+.Rprofile.local
+.devcontainer/.env
+.devcontainer/.ssh/
+.devcontainer/.gitconfig.local
