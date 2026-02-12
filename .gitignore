@@ -7,10 +7,10 @@
 !/design/
 
 # Ignore these dotfiles/dotdirs
-.claude/
-.library/
 .DS_Store
-.Rprofile.local
+.devcontainer/.claude/
+.devcontainer/.library/
 .devcontainer/.env
 .devcontainer/.ssh/
-.devcontainer/.gitconfig.local
+.devcontainer/*.local
+.devcontainer/.Rhistory

@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
     openssh-client \
     pandoc \
+    qpdf \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Quarto (using .deb, same approach as rocker)
@@ -39,17 +40,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get update \
     && apt-get install -y --no-install-recommends chromium \
     && rm -rf /var/lib/apt/lists/*
-# chromote auto-adds --no-sandbox in Docker. Quarto needs a wrapper.
-RUN printf '#!/bin/sh\nexec /usr/bin/chromium --no-sandbox --disable-dev-shm-usage "$@"\n' \
-    > /usr/local/bin/chromium-wrapper && chmod +x /usr/local/bin/chromium-wrapper
-ENV CHROMOTE_CHROME=/usr/bin/chromium
-ENV QUARTO_CHROMIUM=/usr/local/bin/chromium-wrapper
 
-# Install Claude CLI (native installer)
+# Wrapper so that every Chromium invocation (Quarto, chromote, …) gets
+# --disable-crash-reporter, preventing temp-file detritus in /tmp that
+# triggers R CMD check NOTEs.  Quarto looks for "chromium-browser".
+RUN printf '#!/bin/sh\nexec /usr/bin/chromium --disable-crash-reporter "$@"\n' \
+      > /usr/bin/chromium-browser \
+    && chmod +x /usr/bin/chromium-browser
+
+# Create non-root user
+ARG USERNAME=dev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME
+
+# Switch to non-root user for Claude CLI install
+USER $USERNAME
 RUN curl -fsSL https://claude.ai/install.sh | bash
-ENV PATH="/root/.local/bin:${PATH}"
+ENV PATH="/home/dev/.local/bin:${PATH}"
 
 ENV SHELL=/bin/bash
 SHELL ["/bin/bash", "-c"]
 
-# .Rprofile is picked up from the workspace mount at /workspace/.Rprofile
+# Append .bashrc.local sourcing to the default .bashrc
+RUN cat >> /home/dev/.bashrc <<'EOF'
+
+if [ -f /workspace/.devcontainer/.bashrc.local ]; then
+  . /workspace/.devcontainer/.bashrc.local
+fi
+EOF
+
+# .Rprofile is symlinked from .devcontainer/.Rprofile via postCreateCommand

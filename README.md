@@ -2,9 +2,13 @@
 
 ## Getting Started
 
-Open this project in VS Code and select "Reopen in Container" (or use the
-Dev Containers CLI). The container is based on `rocker/r-ver:4.4.2` and
-includes Claude CLI, git, ssh, and common R system dependencies.
+Open this project in Zed (or any editor with devcontainer support) and open
+it as a dev container. The container is based on `rocker/r-ver:4.5.2` and
+includes Claude CLI, Quarto, Chromium, git, ssh, and common R system
+dependencies.
+
+The container runs as a non-root user `dev` (UID 1000) via the `remoteUser`
+setting.
 
 ## User-Specific Configuration
 
@@ -17,18 +21,18 @@ files themselves need to be provided by each developer.
 Place your SSH key pair in `.devcontainer/.ssh/`:
 
 ```
-.devcontainer/.ssh/id_ecdsa
-.devcontainer/.ssh/id_ecdsa.pub
+.devcontainer/.ssh/<keyfile>
+.devcontainer/.ssh/<keyfile>.pub
 ```
 
-This directory is bind-mounted to `/root/.ssh/` in the container.
+This directory is symlinked to `/home/dev/.ssh/` on container startup.
 Permissions are set automatically (`700` on the directory, `600` on private
-keys).
+key files).
 
 To generate a new key:
 
 ```sh
-ssh-keygen -t ecdsa -b 256 -f .devcontainer/.ssh/id_ecdsa -N ""
+ssh-keygen -t ed25519 -f .devcontainer/.ssh/id_ed25519 -N ""
 ```
 
 Add the public key to your GitHub account under **Settings > SSH and GPG
@@ -40,10 +44,10 @@ Git configuration is split into tracked (shared) and gitignored (personal)
 parts.
 
 **Tracked** (`.devcontainer/gitconfig`): Contains shared settings such as
-the global gitignore. This is symlinked to `/root/.gitconfig` and includes
-the local config via git's `[include]` directive.
+the global gitignore. This is symlinked to `/home/dev/.gitconfig` and
+includes the local config via git's `[include]` directive.
 
-**Tracked** (`.devcontainer/gitignore_global`): Global gitignore patterns
+**Tracked** (`.devcontainer/gitignore`): Global gitignore patterns
 applied across all repos (e.g. `.DS_Store`).
 
 **Gitignored** (`.devcontainer/.gitconfig.local`): Personal git settings.
@@ -71,44 +75,63 @@ GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...
 
 ### R Profile
 
-Shared R settings are in `.Rprofile` (tracked), which is symlinked to
-`/root/.Rprofile`. This sets up the package library path, binary package
-installs via Posit Package Manager, and Shiny port forwarding.
+Shared R settings are in `.devcontainer/.Rprofile` (tracked), which is
+symlinked to `/home/dev/.Rprofile`. This sets up the package library path,
+binary package installs via Posit Package Manager, and Shiny port forwarding.
 
-For personal R settings, create `.Rprofile.local` (gitignored) at the
-project root. It is automatically sourced by `.Rprofile` if present.
+For personal R settings, create `.devcontainer/.Rprofile.local` (gitignored).
+It is automatically sourced by `.devcontainer/.Rprofile` if present.
+
+To persist R command history across container rebuilds, add the following
+to `.devcontainer/.Rprofile.local`:
+
+```r
+Sys.setenv(R_HISTFILE = "/workspace/.devcontainer/.Rhistory")
+```
+
+### Shell
+
+The container uses bash. A default `.bashrc` is provided by the image,
+extended to source `.devcontainer/.bashrc.local` if it exists.
+
+For personal shell settings (aliases, prompt, etc.), create
+`.devcontainer/.bashrc.local` (gitignored).
 
 ### Claude CLI
 
-Claude session data persists in `.claude/`, which is bind-mounted to
-`/root/.claude`. The file `.claude/claude.json` is symlinked to
-`/root/.claude.json` for user-scoped config (MCP servers, onboarding
-state).
+Claude session data persists in `.devcontainer/.claude/`, which is
+symlinked to `/home/dev/.claude` on container startup. The file
+`claude.json` within is also symlinked to `/home/dev/.claude.json` for
+user-scoped config (MCP servers, onboarding state).
 
 No manual setup is needed beyond providing `CLAUDE_CODE_OAUTH_TOKEN` in
 the `.env` file.
 
 ### Lintr
 
-A global lintr config is provided in `.lintr` (tracked) and symlinked to
-`/root/.lintr`. This applies as a default to all child repos. Any repo
-with its own `.lintr` file will override the global config.
+A global lintr config is provided in `.devcontainer/.lintr` (tracked) and
+symlinked to `/workspace/.lintr` on container startup. Lintr walks up the
+directory tree from the file being linted, so the workspace-root symlink
+acts as a fallback for all child repos. Any repo with its own `.lintr`
+file will override the global config.
 
 ## Tracked vs Gitignored Summary
 
 | File | Tracked | Purpose |
 |------|---------|---------|
+| `README.md` | Yes | This file |
+| `AGENTS.md` | Yes | Agent instructions |
+| `.devcontainer/.claude/` | **No** | Claude session data |
+| `.devcontainer/.library/` | **No** | Installed R packages |
 | `.devcontainer/Dockerfile` | Yes | Container image definition |
 | `.devcontainer/devcontainer.json` | Yes | DevContainer configuration |
 | `.devcontainer/gitconfig` | Yes | Shared git config |
-| `.devcontainer/gitignore_global` | Yes | Global gitignore patterns |
-| `README.md` | Yes | This file |
-| `.Rprofile` | Yes | Shared R settings |
-| `.lintr` | Yes | Global lintr config |
-| `AGENTS.md` | Yes | Agent instructions |
-| `.devcontainer/.env` | **No** | Auth tokens |
 | `.devcontainer/.gitconfig.local` | **No** | Personal git identity |
+| `.devcontainer/gitignore` | Yes | Global gitignore patterns |
+| `.devcontainer/.Rprofile` | Yes | Shared R settings |
+| `.devcontainer/.Rprofile.local` | **No** | Personal R settings |
+| `.devcontainer/.Rhistory` | **No** | R command history (opt-in) |
+| `.devcontainer/.lintr` | Yes | Global lintr config |
+| `.devcontainer/.env` | **No** | Auth tokens |
 | `.devcontainer/.ssh/` | **No** | SSH keys |
-| `.Rprofile.local` | **No** | Personal R settings |
-| `.claude/` | **No** | Claude session data |
-| `.library/` | **No** | Installed R packages |
+| `.devcontainer/.bashrc.local` | **No** | Personal shell settings |

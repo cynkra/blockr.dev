@@ -1,4 +1,4 @@
-.libPaths(c("/workspace/.library", .libPaths()))
+.libPaths(c("/workspace/.devcontainer/.library", .libPaths()))
 
 options(
   repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest"),
@@ -17,6 +17,6 @@ if (interactive()) {
   )
 }
 
-if (file.exists(".Rprofile.local")) {
-  source(".Rprofile.local")
+if (file.exists("/workspace/.devcontainer/.Rprofile.local")) {
+  source("/workspace/.devcontainer/.Rprofile.local")
 }

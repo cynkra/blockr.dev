@@ -4,15 +4,17 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
+  "remoteUser": "dev",
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-  "mounts": [
-    "source=${localWorkspaceFolder}/.library,target=/workspace/.library,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/.claude,target=/root/.claude,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/.devcontainer/.ssh,target=/root/.ssh,type=bind,consistency=cached"
-  ],
   "runArgs": ["--env-file", ".devcontainer/.env"],
-  "initializeCommand": "mkdir -p .library .claude .devcontainer/.ssh",
-  "postCreateCommand": "mkdir -p /workspace/.library && ln -sf /root/.claude/claude.json /root/.claude.json && ln -sf /workspace/.devcontainer/gitconfig /root/.gitconfig && ln -sf /workspace/.Rprofile /root/.Rprofile && ln -sf /workspace/.lintr /root/.lintr && chmod 700 /root/.ssh && if ls /root/.ssh/id_* 1>/dev/null 2>&1; then chmod 600 /root/.ssh/id_*; fi",
+  "initializeCommand": "mkdir -p .devcontainer/.library .devcontainer/.claude .devcontainer/.ssh",
+  "postCreateCommand": {
+    "claude": "rm -rf /home/dev/.claude && ln -sf /workspace/.devcontainer/.claude /home/dev/.claude && ln -sf /home/dev/.claude/claude.json /home/dev/.claude.json",
+    "gitconfig": "ln -sf /workspace/.devcontainer/gitconfig /home/dev/.gitconfig",
+    "rprofile": "ln -sf /workspace/.devcontainer/.Rprofile /home/dev/.Rprofile",
+    "lintr": "ln -sf /workspace/.devcontainer/.lintr /workspace/.lintr",
+    "ssh": "ln -sf /workspace/.devcontainer/.ssh /home/dev/.ssh && chmod 700 /home/dev/.ssh && find /home/dev/.ssh -type f ! -name '*.pub' ! -name known_hosts ! -name config -exec chmod 600 {} +"
+  },
   "appPort": [3838]
 }
