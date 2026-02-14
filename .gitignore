@@ -8,6 +8,7 @@
 
 # Ignore these dotfiles/dotdirs
 .DS_Store
+.claude/
 .devcontainer/.claude/
 .devcontainer/.library/
 .devcontainer/.env
