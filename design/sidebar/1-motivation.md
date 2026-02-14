@@ -54,9 +54,7 @@ A working implementation exists on `blockr.dock@feat/sidebar-s3-dispatch` and is
 
 Screenshots from the deployed version:
 
-| Empty board | Sidebar open | Search filtering |
-|---|---|---|
-| ![Empty board](screenshot-01-empty-board.png) | ![Sidebar open](screenshot-02-sidebar-open.png) | ![Search filtering](screenshot-03-sidebar-search.png) |
+![Sidebar open](screenshots/screenshot-02-sidebar-open.png)
 
 ## Why a spec, not just a merge
 
