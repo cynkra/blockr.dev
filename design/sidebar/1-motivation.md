@@ -36,6 +36,10 @@ We need UI for: adding blocks, appending/prepending blocks with auto-linking, cr
 
 blockr.dock uses a Bootstrap offcanvas for settings today. It's visually inconsistent with the rest of the app and limited in what it can do. We need a custom sidebar anyway — the question is whether to build one that only serves settings, or one that serves everything.
 
+### 5. Unblocks removing Bootstrap entirely
+
+The modals and offcanvas are the last important pieces of Bootstrap dependency in blockr.dock. Replacing them with a custom sidebar removes the gate to a no-Bootstrap architecture. Dropping Bootstrap means: smaller bundle, no class name conflicts, full control over the design system, and easier theming — many micro-improvements to UX that compound across the product.
+
 ## What the industry does
 
 Node-based editors and workflow builders commonly use sidebars for adding components:
