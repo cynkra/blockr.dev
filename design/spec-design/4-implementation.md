@@ -127,3 +127,11 @@ When the user says they're done after any phase, respect that. Don't push for mo
 - **All four files exist:** Do a coherence review. Read all four documents, check that they tell a consistent story — motivation flows into requirements, design addresses the requirements, implementation is detailed enough to code from. Flag contradictions, gaps, or redundancies. Only after the review passes, tell the user the spec is ready to code from. Offer to fix anything flagged.
 - **User wants to revise a completed phase:** Allow it. Read the existing file, discuss changes, rewrite it.
 - **Multiple design options:** When the user wants to explore multiple design approaches, create `3-design-<option>.md` files instead of a single `3-design.md`.
+
+## Artifact
+
+The implemented skill is stored alongside this spec as [`SKILL.md`](SKILL.md).
+
+## Sharing
+
+The skill lives in `.devcontainer/.claude/skills/blockr-spec/SKILL.md`, which gets mounted into the container as `~/.claude`. That directory is currently gitignored, so sharing the skill via version control needs a separate spec (e.g., shared-config) to sort out the `.gitignore` rules, repo name, and assistant-agnostic format.
