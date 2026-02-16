@@ -8,7 +8,10 @@
 
 # Ignore these dotfiles/dotdirs
 .DS_Store
-.devcontainer/.claude/
+!.devcontainer/.claude/
+.devcontainer/.claude/*
+!.devcontainer/.claude/skills/
+!.devcontainer/.claude/settings.json
 .devcontainer/.library/
 .devcontainer/.env
 .devcontainer/.ssh/

@@ -8,15 +8,16 @@
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "mounts": [
+    "source=${localWorkspaceFolder}/.devcontainer/.claude.local,target=/workspace/.claude,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/.devcontainer/.lintr,target=/workspace/.lintr,type=bind,consistency=cached",
     "type=tmpfs,destination=/workspace/.git"
   ],
   "runArgs": ["--env-file", ".devcontainer/.env"],
-  "initializeCommand": "mkdir -p .devcontainer/.library .devcontainer/.claude .devcontainer/.ssh",
+  "initializeCommand": "mkdir -p .devcontainer/.library .devcontainer/.claude .devcontainer/.claude.local .devcontainer/.ssh",
   "postCreateCommand": {
     "claude": "rm -rf /home/dev/.claude && ln -sf /workspace/.devcontainer/.claude /home/dev/.claude && ln -sf /home/dev/.claude/claude.json /home/dev/.claude.json",
     "gitconfig": "ln -sf /workspace/.devcontainer/gitconfig /home/dev/.gitconfig",
     "rprofile": "ln -sf /workspace/.devcontainer/.Rprofile /home/dev/.Rprofile",
-    "lintr": "ln -sf /workspace/.devcontainer/.lintr /workspace/.lintr",
     "ssh": "ln -sf /workspace/.devcontainer/.ssh /home/dev/.ssh && chmod 700 /home/dev/.ssh && find /home/dev/.ssh -type f ! -name '*.pub' ! -name known_hosts ! -name config -exec chmod 600 {} +"
   },
   "appPort": [3838]
