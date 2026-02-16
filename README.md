@@ -99,10 +99,41 @@ For personal shell settings (aliases, prompt, etc.), create
 
 ### Claude CLI
 
-Claude session data persists in `.devcontainer/.claude/`, which is
-symlinked to `/home/dev/.claude` on container startup. The file
-`claude.json` within is also symlinked to `/home/dev/.claude.json` for
-user-scoped config (MCP servers, onboarding state).
+Claude configuration uses two directories that map to Claude's two-tier
+discovery system:
+
+- `.devcontainer/.claude/` → symlinked to `~/.claude` (user level)
+- `.devcontainer/.claude.local/` → bind-mounted to `/workspace/.claude`
+  (project level)
+
+**Shared skills** (tracked) live in `.devcontainer/.claude/skills/`.
+Each skill is a folder containing a `SKILL.md` file:
+
+```
+.devcontainer/.claude/skills/blockr-spec/SKILL.md
+```
+
+Skills are available as slash commands (e.g. `/blockr-spec`) inside the
+container.
+
+**Shared settings** (tracked) are in `.devcontainer/.claude/settings.json`.
+
+**Personal skills and settings** (gitignored) go in
+`.devcontainer/.claude.local/`. This directory is bind-mounted to
+`/workspace/.claude` inside the container, so Claude CLI discovers it at
+the project level. To add a personal skill:
+
+```
+.devcontainer/.claude.local/skills/my-skill/SKILL.md
+```
+
+To override settings locally, create
+`.devcontainer/.claude.local/settings.json`.
+
+Session data (history, cache, etc.) also persists in
+`.devcontainer/.claude/` but is gitignored. The file `claude.json`
+within is symlinked to `/home/dev/.claude.json` for user-scoped config
+(MCP servers, onboarding state).
 
 No manual setup is needed beyond providing `CLAUDE_CODE_OAUTH_TOKEN` in
 the `.env` file.
@@ -110,10 +141,10 @@ the `.env` file.
 ### Lintr
 
 A global lintr config is provided in `.devcontainer/.lintr` (tracked) and
-symlinked to `/workspace/.lintr` on container startup. Lintr walks up the
-directory tree from the file being linted, so the workspace-root symlink
-acts as a fallback for all child repos. Any repo with its own `.lintr`
-file will override the global config.
+bind-mounted to `/workspace/.lintr` inside the container. Lintr walks up
+the directory tree from the file being linted, so the workspace-root
+mount acts as a fallback for all child repos. Any repo with its own
+`.lintr` file will override the global config.
 
 ## Tracked vs Gitignored Summary
 
@@ -121,7 +152,10 @@ file will override the global config.
 |------|---------|---------|
 | `README.md` | Yes | This file |
 | `AGENTS.md` | Yes | Agent instructions |
-| `.devcontainer/.claude/` | **No** | Claude session data |
+| `.devcontainer/.claude/skills/` | Yes | Shared Claude skills |
+| `.devcontainer/.claude/settings.json` | Yes | Shared Claude settings |
+| `.devcontainer/.claude/` (rest) | **No** | Claude session data |
+| `.devcontainer/.claude.local/` | **No** | Personal Claude skills & settings |
 | `.devcontainer/.library/` | **No** | Installed R packages |
 | `.devcontainer/Dockerfile` | Yes | Container image definition |
 | `.devcontainer/devcontainer.json` | Yes | DevContainer configuration |
