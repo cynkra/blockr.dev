@@ -14,7 +14,7 @@ Everything for a task lives under a single directory:
     blockr.dplyr/
 ```
 
-The task ID is the spec topic name (e.g. `parallel-tasks`), linking tasks to their design specs.
+The task ID is the spec topic name (e.g. `parallel-tasks`), linking tasks to their design specs. Task creation requires that `design/<id>/` already exists.
 
 ## Task lifecycle
 

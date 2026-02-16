@@ -26,7 +26,7 @@ Tasks use the existing `{issue}-{descriptor}` branch convention from AGENTS.md. 
 
 ## Task–spec link
 
-Tasks correspond to design specs. The task ID is the spec topic name (e.g. `parallel-tasks` maps to `design/parallel-tasks/`).
+Tasks correspond to design specs. The task ID is the spec topic name (e.g. `parallel-tasks` maps to `design/parallel-tasks/`). A task cannot be created without an existing spec — `design/<id>/` must exist.
 
 ## Persistence
 

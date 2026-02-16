@@ -28,6 +28,9 @@ task_dir <- file.path("/workspace/.tasks", id)
 
 if (dir.exists(task_dir)) stop("Task '", id, "' already exists.")
 
+spec_dir <- file.path("/workspace/design", id)
+if (!dir.exists(spec_dir)) stop("No spec found at ", spec_dir, ". Create a spec first.")
+
 dir.create(file.path(task_dir, "library"), recursive = TRUE)
 dir.create(file.path(task_dir, "worktrees"))
 
