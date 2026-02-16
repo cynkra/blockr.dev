@@ -9,7 +9,6 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "mounts": [
     "source=${localWorkspaceFolder}/.devcontainer/.claude.local,target=/workspace/.claude,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/.devcontainer/.lintr,target=/workspace/.lintr,type=bind,consistency=cached",
     "type=tmpfs,destination=/workspace/.git"
   ],
   "runArgs": ["--env-file", ".devcontainer/.env"],

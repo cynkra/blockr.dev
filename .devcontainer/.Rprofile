@@ -1,6 +1,7 @@
 .libPaths(c("/workspace/.devcontainer/.library", .libPaths()))
 
 options(
+  lintr.linter_file = "/workspace/.devcontainer/.lintr",
   repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest"),
   HTTPUserAgent = sprintf(
     "R/%s R (%s)",
