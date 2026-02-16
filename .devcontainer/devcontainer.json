@@ -7,6 +7,9 @@
   "remoteUser": "dev",
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "mounts": [
+    "type=tmpfs,destination=/workspace/.git"
+  ],
   "runArgs": ["--env-file", ".devcontainer/.env"],
   "initializeCommand": "mkdir -p .devcontainer/.library .devcontainer/.claude .devcontainer/.ssh",
   "postCreateCommand": {
