@@ -16,16 +16,14 @@ Guide structured spec writing through four phases. Your primary job is **phase e
 `$ARGUMENTS` is the topic name. The spec folder is:
 
 ```
-blockr.dev/design/$ARGUMENTS/
+design/$ARGUMENTS/
 ```
 
-All specs live in the shared `blockr.dev` repo, not in individual package repos.
-
-If `$ARGUMENTS` is empty, ask the user for a topic name before proceeding.
+If `$ARGUMENTS` is empty, suggest a short kebab-case name based on the conversation context (e.g., "How about `ci-setup`?") and ask the user to confirm or pick a different name before proceeding.
 
 ## On invocation
 
-1. Check if `blockr.dev/blockr.dev/design/<topic>/` exists.
+1. Check if `design/<topic>/` exists.
 2. If it exists, read all files in the folder to understand context.
 3. Scan for numbered phase files: `1-motivation.md`, `2-requirements.md`, `3-design.md`, `4-implementation.md`.
 4. Determine the current phase (see phase detection).
@@ -92,7 +90,7 @@ These define what each phase covers and what the document should capture:
 - **No rigid template.** The phase purpose defines what matters, not a fixed heading structure. Adapt to what was discussed.
 - **Title format:** `# <Topic> — <Phase>` (e.g., `# Shared Config — Motivation`).
 - **Write from the conversation.** Capture what was actually discussed, not a generic treatment of the topic.
-- **Create the folder if needed.** If this is a new topic, create `blockr.dev/design/<topic>/` before writing the first file.
+- **Create the folder if needed.** If this is a new topic, create `design/<topic>/` before writing the first file.
 - **Phases 1–3: keep concise.** These are short documents — a few paragraphs, not essays. State the point and move on. Save detail for phase 4.
 - **Phase 4: link to reference code.** Include file paths and line numbers to existing implementations, prototypes, or patterns being reused. If screenshots or mockups exist, reference or store them in the spec folder.
 - **No LLM voice.** Write plainly. No "This is critical because...", no "It's worth noting that...", no rhetorical buildup. Just say the thing.
