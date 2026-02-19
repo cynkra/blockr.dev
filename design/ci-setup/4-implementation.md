@@ -6,9 +6,12 @@ A working scaffold exists at `/workspace/blockr.ci/`. It has the workflows and c
 
 ```
 blockr.ci/.github/
-  actions/parse-deps/action.yaml     # 67 lines, from blockr.core
+  actions/parse-deps/action.yaml     # composite action with layered dep resolution
+  actions/parse-deps/parse-deps.sh   # bash script: registry → default-deps → PR body
+  actions/registry.txt               # package name → GitHub ref mapping
   actions/rerun-deps/action.yaml     # 74 lines, from blockr.core
-  workflows/ci.yaml                  # 360 lines, all jobs
+  actions/tests/parse-deps.bats      # 20 bats tests for parse-deps
+  workflows/ci.yaml                  # all jobs
   workflows/deps-rerun.yaml          # 39 lines
 ```
 
@@ -30,6 +33,7 @@ on:
     branches: main
   pull_request:
     branches: main
+  merge_group:
   workflow_call:
     inputs:
       ...
@@ -103,6 +107,34 @@ Before any consumer migration, validate that `uses: ./.github/actions/parse-deps
 
 Test: create a throwaway consumer repo that calls `cynkra/blockr.ci/.github/workflows/ci.yaml@main`. If smoke/check pass (parse-deps runs without "action not found"), the `./` resolution works. If it fails, switch all action references to `cynkra/blockr.ci/.github/actions/parse-deps@main`.
 
+## Registry-based dependency resolution
+
+### parse-deps action inputs
+
+The parse-deps composite action accepts two new inputs in addition to the existing `pr-body`, `pkg`, and `base-packages`:
+
+- **`description-path`** — path to a DESCRIPTION file. When set, package names from `Imports`, `Depends`, and `Suggests` are looked up in the registry.
+- **`default-deps`** — newline-separated pak refs that override registry entries but are overridden by PR body deps.
+
+The action passes three env vars to the script: `DESCRIPTION_PATH`, `DEFAULT_DEPS`, and `REGISTRY` (resolved via `${{ github.action_path }}/../registry.txt`).
+
+### parse-deps.sh resolution logic
+
+The script uses bash associative arrays (bash 4+, standard on GH Actions runners) for dedup by `owner/repo` prefix:
+
+1. **Registry layer**: if `DESCRIPTION_PATH` is set and exists, extract package names via awk, look each up in `$REGISTRY`, call `add_dep` for matches.
+2. **default-deps layer**: parse `$DEFAULT_DEPS` line by line, call `add_dep` (overwrites registry for same key).
+3. **PR body layer**: parse `deps` block as before, call `add_dep` (overwrites everything for same key).
+4. **Output**: `extra-packages = BASE_PACKAGES + all deps from dep_map` (insertion order preserved). `ref` is extracted from the dep_map entry matching `PKG` (not just PR body).
+
+### ci.yaml integration
+
+The `ci.yaml` workflow passes `description-path: DESCRIPTION` and `default-deps: ${{ inputs.default-deps }}` to parse-deps in the smoke, check, and revdep jobs. The revdep job uses `description-path: pkg/DESCRIPTION` since the checkout is at `pkg/`.
+
+### Backward compatibility
+
+All new inputs default to empty strings. When `DESCRIPTION_PATH` and `DEFAULT_DEPS` are both empty, behavior is identical to the original script.
+
 ## Per-repo migration
 
 Each repo replaces its `.github/workflows/` contents with two files and deletes its `.lintr`. The revdep matrix entries below use the current org (`BristolMyersSquibb`) — adjust to match wherever the repos actually live.
@@ -135,10 +167,11 @@ with:
 
 ```yaml
 with:
-  extra-pkgdown-packages: "github::DivadNojnarg/DiagrammeR"
+  default-deps: |
+    cynkra/g6R
 ```
 
-No revdep — nothing depends on blockr.dag. The current revdep.yaml that checks blockr.core upstream is semantically wrong and gets dropped.
+No revdep — nothing depends on blockr.dag. The current revdep.yaml that checks blockr.core upstream is semantically wrong and gets dropped. Internal deps like `blockr.core` and `blockr.dock` are auto-resolved from the registry via DESCRIPTION; `g6R` is not in the registry so it needs `default-deps`.
 
 ### blockr.code
 
@@ -218,4 +251,5 @@ Keep: `.github/codecov.yml` (read by codecov service, not CI).
 - **repos without `CODECOV_TOKEN` secret:** coverage job will fail to upload but the step itself won't block the pipeline (covr still runs, codecov upload is best-effort). Repos need the secret configured.
 - **repos without `BLOCKR_PAT` secret:** all jobs that install private deps will fail. This must be configured per-repo before migration.
 - **revdep on PR vs push:** parse-deps outputs the base packages on push events (no PR body). Revdep checks downstream packages at their default branch, which is the expected behaviour on merge to main.
-- **pkgdown deploy on PR:** gated by `if: github.event_name != 'pull_request'`. On PR the site is built (validating it works) but not deployed.
+- **pkgdown deploy:** gated by `if: github.event_name == 'push'`. On PR and merge queue the site is built (validating it works) but not deployed. Only actual pushes to main trigger deployment.
+- **check on merge queue:** the full multi-platform check matrix runs on `merge_group` events. The check job condition is `if: github.event_name != 'pull_request'`, which matches both `push` and `merge_group`. PRs only get lint + smoke (fast gate); the merge queue runs everything.

@@ -10,6 +10,7 @@
 - **Universal parse-deps and deps-rerun.** Every consumer gets the PR-body dependency override mechanism and the automatic re-run on deps block changes, not just blockr.core.
 - **Canonical lintr config.** One set of linter rules, centrally defined and applied at CI time. Repos only control which files to exclude from linting.
 - **Testable before merge.** Changes to blockr.ci are validated by CI on the blockr.ci repo itself before reaching main. Consumers track `@main`, so a broken merge would affect everyone — the safety net is on the blockr.ci side.
+- **Full check before merge.** The multi-platform check matrix runs in the merge queue, not just after push to main. PRs that fail the full check are rejected before merging. The merge queue (`merge_group` event) gates the merge on all platforms passing.
 
 ## Non-goals
 
