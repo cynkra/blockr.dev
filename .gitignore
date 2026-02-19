@@ -4,6 +4,7 @@
 # Except AGENTS.md
 !/AGENTS.md
 !/README.md
+!/TODO.md
 !/design/
 
 # Ignore these dotfiles/dotdirs

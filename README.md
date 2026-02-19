@@ -65,13 +65,13 @@ Create `.devcontainer/.env` with your tokens:
 
 ```
 CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...
-GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...
+GH_TOKEN=ghp_...
 ```
 
 - `CLAUDE_CODE_OAUTH_TOKEN`: OAuth token from a Claude Max/Pro subscription
   (not an API key).
-- `GITHUB_PERSONAL_ACCESS_TOKEN`: Used for the GitHub MCP server
-  integration.
+- `GH_TOKEN`: GitHub personal access token, used by `gh` CLI and GitHub API
+  calls.
 
 ### R Profile
 
