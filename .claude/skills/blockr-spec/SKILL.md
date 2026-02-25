@@ -16,19 +16,22 @@ Guide structured spec writing through four phases. Your primary job is **phase e
 `$ARGUMENTS` is the topic name. The spec folder is:
 
 ```
-design/$ARGUMENTS/
+blockr.design/open/$ARGUMENTS/
 ```
 
-If `$ARGUMENTS` is empty, suggest a short kebab-case name based on the conversation context (e.g., "How about `ci-setup`?") and ask the user to confirm or pick a different name before proceeding.
+All specs live in the `blockr.design` repo, not in individual package repos.
+
+If `$ARGUMENTS` is empty, ask the user for a topic name before proceeding.
 
 ## On invocation
 
-1. Check if `design/<topic>/` exists.
-2. If it exists, read all files in the folder to understand context.
-3. Scan for numbered phase files: `1-motivation.md`, `2-requirements.md`, `3-design.md`, `4-implementation.md`.
-4. Determine the current phase (see phase detection).
-5. If the folder doesn't exist, start at phase 1.
-6. Tell the user which phase you're starting and why.
+1. Check if `blockr.design/open/<topic>/` exists.
+2. If not found, also check `blockr.design/done/<topic>/` (for review/reference) and `blockr.design/abandoned/<topic>/` (for potential revival).
+3. If it exists in any location, read all files in the folder to understand context.
+4. Scan for numbered phase files: `1-motivation.md`, `2-requirements.md`, `3-design.md`, `4-implementation.md`.
+5. Determine the current phase (see phase detection).
+6. If the folder doesn't exist anywhere, start at phase 1 in `blockr.design/open/<topic>/`.
+7. Tell the user which phase you're starting and why. If the spec was found in `done/` or `abandoned/`, mention this.
 
 ## Phase detection
 
@@ -90,7 +93,7 @@ These define what each phase covers and what the document should capture:
 - **No rigid template.** The phase purpose defines what matters, not a fixed heading structure. Adapt to what was discussed.
 - **Title format:** `# <Topic> — <Phase>` (e.g., `# Shared Config — Motivation`).
 - **Write from the conversation.** Capture what was actually discussed, not a generic treatment of the topic.
-- **Create the folder if needed.** If this is a new topic, create `design/<topic>/` before writing the first file.
+- **Create the folder if needed.** If this is a new topic, create `blockr.design/open/<topic>/` before writing the first file.
 - **Phases 1–3: keep concise.** These are short documents — a few paragraphs, not essays. State the point and move on. Save detail for phase 4.
 - **Phase 4: link to reference code.** Include file paths and line numbers to existing implementations, prototypes, or patterns being reused. If screenshots or mockups exist, reference or store them in the spec folder.
 - **No LLM voice.** Write plainly. No "This is critical because...", no "It's worth noting that...", no rhetorical buildup. Just say the thing.
@@ -129,7 +132,8 @@ When all four phase files already exist:
 2. Check that they tell a consistent story — motivation flows into requirements, design addresses the requirements, implementation is detailed enough to code from.
 3. Flag contradictions, gaps, or redundancies.
 4. Only after the review passes, tell the user the spec is ready to code from.
-5. Offer to fix anything you flagged.
+5. Mention that the spec folder can be moved from `open/` to `done/` when implementation is complete.
+6. Offer to fix anything you flagged.
 
 ## Edge cases
 
