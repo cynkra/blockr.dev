@@ -1,21 +1,25 @@
 # Ignore everything at root not starting with "."
 /[^.]*
 
-# Except AGENTS.md
-!/AGENTS.md
+# Tracked root files
+!/CLAUDE.md
 !/README.md
 !/TODO.md
 !/design/
+!/docs/
+!/setup.sh
 
-# Ignore these dotfiles/dotdirs
+# .claude: track skills only
+.claude/*
+!.claude/skills/
+
+# .devcontainer ignores
 .DS_Store
-!.devcontainer/.claude/
-.devcontainer/.claude/*
-!.devcontainer/.claude/skills/
-!.devcontainer/.claude/settings.json
 .devcontainer/.library/
 .devcontainer/.env
 .devcontainer/.ssh/
 .devcontainer/*.local
 .devcontainer/.Rhistory
+.devcontainer/.claude/*
+!.devcontainer/.claude/settings.json
 .lintr
