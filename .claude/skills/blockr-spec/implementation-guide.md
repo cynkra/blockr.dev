@@ -12,14 +12,7 @@ Two layers, both using testthat.
 
 ### Unit tests for pure functions
 
-Test expression builders, helpers, parsers — anything that takes input and returns output without Shiny.
-
-```r
-test_that("read_file_expr generates CSV expression", {
-  expr <- read_file_expr("data.csv", sep = ",")
-  expect_equal(as.character(expr[[1]]), c("::", "readr", "read_csv"))
-})
-```
+Test helpers, parsers, validators — anything that takes input and returns output without Shiny. Focus on edge cases like invalid input and boundary conditions. Don't test expression structure (e.g. checking `expr[[1]]`) — that's fragile and breaks when the wrapping changes. Behavioral coverage belongs in testServer tests.
 
 ### testServer tests for blocks
 
