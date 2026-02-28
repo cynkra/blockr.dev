@@ -135,6 +135,10 @@ When all four phase files already exist:
 5. Mention that the spec folder can be moved from `open/` to `done/` when implementation is complete.
 6. Offer to fix anything you flagged.
 
+## Implementation
+
+When the user asks to implement a reviewed spec, read `implementation-guide.md` (in this skill's directory) and follow it. The guide covers: writing code from the spec, writing testthat tests (unit + testServer), running `devtools::check()`, and Playwright e2e verification for UI changes.
+
 ## Edge cases
 
 - **No topic provided:** Ask for one. Don't guess.
