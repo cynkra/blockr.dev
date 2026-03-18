@@ -11,6 +11,31 @@ argument-hint: "<task description>"
 
 Debug blockr Shiny apps interactively using the Playwright MCP server.
 
+## Setup (devcontainer)
+
+The devcontainer Dockerfile already installs Chromium and creates the necessary
+wrappers. The `postCreateCommand` in `devcontainer.json` installs
+`@playwright/mcp` globally and creates a `--no-sandbox` wrapper.
+
+**If Playwright can't find a browser**, the fix is in the **Dockerfile**, not
+at runtime. Do NOT spend time trying to install or configure Chrome from inside
+the running container. Instead, edit `.devcontainer/Dockerfile` and rebuild.
+
+The key pieces (already set up):
+
+1. **Dockerfile** installs `chromium` via the xtradeb PPA and creates a
+   no-sandbox wrapper at `/opt/google/chrome/chrome` (the default path
+   Playwright searches).
+2. **`devcontainer.json` postCreateCommand** runs
+   `npm install -g @playwright/mcp@latest` and creates
+   `/home/dev/.local/bin/chromium-nosandbox`.
+3. **`.claude/mcp.json`** configures the Playwright MCP server with
+   `--executable-path /home/dev/.local/bin/chromium-nosandbox` and
+   `--no-sandbox`.
+
+If you need to change the browser path, edit `.claude/mcp.json` — do not
+try to install Chrome at runtime.
+
 ## Workflow
 
 ### Step 0 — Add Debug Logging First

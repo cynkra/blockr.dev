@@ -1,3 +1,7 @@
 {
+  "enabledPlugins": {
+    "playwright@claude-plugins-official": true
+  },
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true
 }
