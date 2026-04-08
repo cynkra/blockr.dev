@@ -99,36 +99,47 @@ For personal shell settings (aliases, prompt, etc.), create
 
 ### Claude CLI
 
-Claude configuration uses two directories that map to Claude's two-tier
-discovery system:
+Shared configuration for Claude Code lives in two places:
 
-- `.devcontainer/.claude/` → symlinked to `~/.claude` (user level)
-- `.devcontainer/.claude.local/` → bind-mounted to `/workspace/.claude`
-  (project level)
+- **`CLAUDE.md`** at the repo root — project instructions, loaded
+  automatically by Claude Code.
+- **`.claude/skills/`** at the repo root — shared skills (slash commands).
+  Each skill is a folder containing a `SKILL.md` file.
 
-**Shared skills** (tracked) live in `.devcontainer/.claude/skills/`.
-Each skill is a folder containing a `SKILL.md` file:
+Both are tracked in git and discovered automatically at the project level.
 
+There are **two ways** to use this shared config, depending on your setup:
+
+#### Option A: Devcontainer (or monorepo)
+
+Open blockr.dev in a devcontainer (or use it as the workspace root).
+`CLAUDE.md` and `.claude/skills/` are at `/workspace/` and discovered
+automatically — no extra setup needed.
+
+#### Option B: Symlinks (plain parent directory)
+
+For developers who keep `~/git/blockr/` as a plain directory with
+independent repos inside, run the setup script once from the parent dir:
+
+```sh
+./blockr.dev/setup.sh
 ```
-.devcontainer/.claude/skills/blockr-spec/SKILL.md
-```
 
-Skills are available as slash commands (e.g. `/blockr-spec`) inside the
-container.
+This creates symlinks from the parent directory to blockr.dev's config:
+
+- `~/git/blockr/CLAUDE.md` → `blockr.dev/CLAUDE.md`
+- `~/git/blockr/.claude/skills/*` → `blockr.dev/.claude/skills/*`
+
+Updates propagate automatically via symlinks — just `git pull` in
+blockr.dev.
+
+#### User-level config
+
+The devcontainer symlinks `.devcontainer/.claude/` to `~/.claude`
+(user level). This directory holds session data, cache, and personal
+settings. It is gitignored except for `settings.json`.
 
 **Shared settings** (tracked) are in `.devcontainer/.claude/settings.json`.
-
-**Personal skills and settings** (gitignored) go in
-`.devcontainer/.claude.local/`. This directory is bind-mounted to
-`/workspace/.claude` inside the container, so Claude CLI discovers it at
-the project level. To add a personal skill:
-
-```
-.devcontainer/.claude.local/skills/my-skill/SKILL.md
-```
-
-To override settings locally, create
-`.devcontainer/.claude.local/settings.json`.
 
 Session data (history, cache, etc.) also persists in
 `.devcontainer/.claude/` but is gitignored. The file `claude.json`
@@ -151,11 +162,12 @@ mount acts as a fallback for all child repos. Any repo with its own
 | File | Tracked | Purpose |
 |------|---------|---------|
 | `README.md` | Yes | This file |
-| `AGENTS.md` | Yes | Agent instructions |
-| `.devcontainer/.claude/skills/` | Yes | Shared Claude skills |
+| `CLAUDE.md` | Yes | Project instructions |
+| `.claude/skills/` | Yes | Shared Claude skills |
+| `docs/` | Yes | Documentation (workflow, etc.) |
+| `setup.sh` | Yes | Symlink setup for plain parent dir |
 | `.devcontainer/.claude/settings.json` | Yes | Shared Claude settings |
 | `.devcontainer/.claude/` (rest) | **No** | Claude session data |
-| `.devcontainer/.claude.local/` | **No** | Personal Claude skills & settings |
 | `.devcontainer/.library/` | **No** | Installed R packages |
 | `.devcontainer/Dockerfile` | Yes | Container image definition |
 | `.devcontainer/devcontainer.json` | Yes | DevContainer configuration |

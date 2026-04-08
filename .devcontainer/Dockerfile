@@ -17,7 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libicu-dev \
     libgit2-dev \
     libsodium-dev \
+    libmagick++-dev \
     cmake \
+    nodejs \
+    npm \
     openssh-client \
     pandoc \
     qpdf \
@@ -47,6 +50,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN printf '#!/bin/sh\nexec /usr/bin/chromium --disable-crash-reporter "$@"\n' \
       > /usr/bin/chromium-browser \
     && chmod +x /usr/bin/chromium-browser
+
+# Playwright MCP expects Chrome at /opt/google/chrome/chrome.
+# Symlink to our --no-sandbox wrapper (container kernel lacks sandbox support).
+RUN mkdir -p /opt/google/chrome \
+    && printf '#!/bin/sh\nexec /usr/bin/chromium --no-sandbox "$@"\n' \
+         > /opt/google/chrome/chrome \
+    && chmod +x /opt/google/chrome/chrome
 
 # Install GitHub CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
