@@ -11,7 +11,7 @@
     "source=${localWorkspaceFolder}/.devcontainer/.claude.local,target=/workspace/.claude,type=bind,consistency=cached",
     "type=tmpfs,destination=/workspace/.git"
   ],
-  "runArgs": ["--env-file", ".devcontainer/.env"],
+  "runArgs": ["--env-file", ".devcontainer/.env", "--name", "blockr_devcontainer"],
   "initializeCommand": "mkdir -p .devcontainer/.library .devcontainer/.claude .devcontainer/.claude.local .devcontainer/.ssh",
   "postCreateCommand": {
     "claude": "rm -rf /home/dev/.claude && ln -sf /workspace/.devcontainer/.claude /home/dev/.claude && ln -sf /home/dev/.claude/claude.json /home/dev/.claude.json",

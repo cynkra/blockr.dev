@@ -116,7 +116,54 @@ See [design/core/roclet.md](/workspace/design/core/roclet.md) for a complete exa
   - API simplification: Required paths → `system.file()` with defaults
 - **Result**: Clean implementation with no major rework required
 
+## blockr.core Utilities
+
+**Always check blockr.core for existing utilities before writing your own.** Use `set_names`, `chr_ply`, `lgl_ply`, `int_ply`, `lst_xtr`, `has_tags`, `coal`, `not_null`, `blockr_abort`, `blockr_warn`, etc. Never use base equivalents like `setNames` when a blockr.core utility exists. When a utility almost fits, prefer adjusting it over inlining a workaround.
+
+**Use the `_xtr` family for element extraction from lists.** When extracting a named field or positional element from each item in a list, use `chr_xtr(x, "field")` / `int_xtr(x, 1L)` etc. — NOT `chr_ply(x, function(x) x$field)` or `chr_ply(x, `[[`, i)`. The `_xtr` variants (`chr_xtr`, `lgl_xtr`, `int_xtr`, `dbl_xtr`, `lst_xtr`) are purpose-built for this and produce cleaner, more readable code.
+
 ## Code Style Preferences
+
+- **No `))` or `})` on its own line** — use multi-line formatting to avoid stacked closing delimiters
+  - Do NOT extract variables just to avoid `))` — that's worse than the `))` itself
+  - The fix is always multi-line formatting:
+    ```r
+    # BAD: )) on its own line
+    return(data.frame(
+      x = character()
+    ))
+
+    # GOOD: multi-line return
+    return(
+      data.frame(
+        x = character()
+      )
+    )
+
+    # BAD: unnecessary extraction to avoid ))
+    rn <- seq_len(n)
+    structure(result, class = "data.frame", row.names = rn)
+
+    # GOOD: multi-line structure
+    structure(
+      result,
+      class = "data.frame",
+      row.names = seq_len(n)
+    )
+    ```
+
+- **Function signatures use hanging indents** — arguments align to the opening `(`, closing `) {` on the last argument line
+    ```r
+    # BAD: `) {` on its own line
+    fake_board_connect <- function(
+        account = "user_a",
+        url = "https://example.com"
+    ) {
+
+    # GOOD: hanging indent
+    fake_board_connect <- function(account = "user_a",
+                                   url = "https://example.com") {
+    ```
 
 - Avoid nested parentheses like `({` - use single parentheses when render function body is simple
   - Good: `renderText(save_status())`
@@ -132,17 +179,14 @@ See [design/core/roclet.md](/workspace/design/core/roclet.md) for a complete exa
     ```
 
 - **Write readable code, not commented code**
-  - Use descriptive variable and function names that make the code self-documenting
-  - Avoid descriptive comments that simply restate what the code does
-  - **BAD**: `# Get constructor name` followed by `ctor_name <- ...`
-  - **GOOD**: Just `ctor_name <- ...` (the variable name already says what it is)
-  - **BAD**: `# Validate required tags` followed by validation code
-  - **GOOD**: Just the validation code (it's obvious that's what it does)
-  - Only add comments when:
-    - Something unexpected or non-obvious is happening
-    - There's important context that isn't clear from the code itself
-    - Future maintainers might be confused without explanation
-  - Section divider comments (e.g., `# Tag parsers ------`) are unnecessary - organize code with blank lines instead
+  - The code itself should be the documentation. Use descriptive variable and function names.
+  - **Do not add comments unless something is truly unexpected or non-obvious.** If the code needs a comment to be understood, rewrite the code to be clearer instead.
+  - **No section divider comments** (e.g., `# Tag parsers ------`, `# Helper functions ---`). Organize code with blank lines instead.
+  - **No "narrating the code" comments** that restate what the next line does:
+    - **BAD**: `# Get constructor name` followed by `ctor_name <- ...`
+    - **BAD**: `# Validate required tags` followed by validation code
+    - **BAD**: `# Save status output` above `output$save_status <- renderText(...)`
+    - Just write the code. If it's not self-explanatory, the names are wrong.
 
 - **Avoid assignment just to return**
   - Don't assign to a variable only to return it on the next line
@@ -207,3 +251,8 @@ Follow package conventions when documenting functions:
 ## Testing
 
 **IMPORTANT**: Always run and verify tests work before claiming they're complete. Don't be optimistic about test code - actually execute it to catch failures.
+
+## Pull Requests
+
+- **No checklists in PR descriptions** — write a plain summary. No `- [ ]` items, no "Test plan" checklists.
+- **Monitor CI in the background** — use `gh pr checks --watch` (a blocking call) with `run_in_background`. Never poll with repeated sleep-then-check loops.

@@ -21,6 +21,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     pandoc \
     qpdf \
+    texlive-latex-base \
+    texlive-latex-recommended \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Quarto (using .deb, same approach as rocker)
@@ -47,6 +52,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN printf '#!/bin/sh\nexec /usr/bin/chromium --disable-crash-reporter "$@"\n' \
       > /usr/bin/chromium-browser \
     && chmod +x /usr/bin/chromium-browser
+
+# Install Node.js (for Playwright MCP server)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install mermaid CLI for rendering mermaid diagrams to SVG
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+RUN npm install -g @mermaid-js/mermaid-cli
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Pre-install Playwright MCP and its browser so it works out of the box
+RUN npx -y @playwright/mcp@latest --help > /dev/null 2>&1 || true \
+    && npx -y playwright install chromium
 
 # Install GitHub CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
