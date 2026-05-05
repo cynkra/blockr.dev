@@ -1,15 +1,10 @@
 {
   "name": "blockr",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "image": "blockr-dev",
   "remoteUser": "dev",
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-  "mounts": [
-    "type=tmpfs,destination=/workspace/.git"
-  ],
+  "mounts": [],
   "runArgs": ["--env-file", ".devcontainer/.env"],
   "initializeCommand": "mkdir -p .devcontainer/.library .devcontainer/.claude .devcontainer/.ssh",
   "postCreateCommand": {
@@ -17,7 +12,17 @@
     "gitconfig": "ln -sf /workspace/.devcontainer/gitconfig /home/dev/.gitconfig",
     "rprofile": "ln -sf /workspace/.devcontainer/.Rprofile /home/dev/.Rprofile",
     "ssh": "ln -sf /workspace/.devcontainer/.ssh /home/dev/.ssh && chmod 700 /home/dev/.ssh && find /home/dev/.ssh -type f ! -name '*.pub' ! -name known_hosts ! -name config -exec chmod 600 {} +",
-    "playwright-mcp": "npm install -g @playwright/mcp@latest && mkdir -p /home/dev/.local/bin && printf '#!/bin/sh\\nexec /usr/bin/chromium --no-sandbox \"$@\"\\n' > /home/dev/.local/bin/chromium-nosandbox && chmod +x /home/dev/.local/bin/chromium-nosandbox"
+    "playwright-mcp": "mkdir -p /home/dev/.local/bin && printf '#!/bin/sh\\nexec /usr/bin/chromium --no-sandbox \"$@\"\\n' > /home/dev/.local/bin/chromium-nosandbox && chmod +x /home/dev/.local/bin/chromium-nosandbox"
   },
-  "appPort": [3838]
+  "customizations": {
+    "zed": {
+      "settings": {
+        "git": {
+          "git_status": false,
+          "inline_blame": { "enabled": false }
+        }
+      }
+    }
+  },
+  "forwardPorts": [3838]
 }

@@ -1,7 +1,12 @@
 {
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "enabledPlugins": {
     "playwright@claude-plugins-official": true
   },
   "effortLevel": "high",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
+  "theme": "light"
 }

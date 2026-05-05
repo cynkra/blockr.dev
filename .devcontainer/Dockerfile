@@ -58,6 +58,9 @@ RUN mkdir -p /opt/google/chrome \
          > /opt/google/chrome/chrome \
     && chmod +x /opt/google/chrome/chrome
 
+# Install Playwright MCP globally (needs root for /usr/local/lib/node_modules)
+RUN npm install -g @playwright/mcp@latest
+
 # Install GitHub CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
       | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -90,5 +93,17 @@ if [ -f /workspace/.devcontainer/.bashrc.local ]; then
   . /workspace/.devcontainer/.bashrc.local
 fi
 EOF
+
+# Disable git for Zed by replacing /usr/bin/git with a no-op stub.
+# Zed's remote server polls git aggressively, causing 200-300% CPU through
+# Docker Desktop's virtiofs layer (https://github.com/zed-industries/zed/issues/13304).
+# The real git binary remains at /usr/lib/git-core/git for direct access.
+USER root
+RUN printf '#!/bin/sh\nexit 0\n' > /usr/bin/git \
+    && chmod +x /usr/bin/git
+USER $USERNAME
+
+# Devcontainer metadata label — Zed requires this to start the container.
+LABEL devcontainer.metadata="[{}]"
 
 # .Rprofile is symlinked from .devcontainer/.Rprofile via postCreateCommand

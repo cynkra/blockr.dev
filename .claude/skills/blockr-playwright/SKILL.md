@@ -11,6 +11,25 @@ argument-hint: "<task description>"
 
 Debug blockr Shiny apps interactively using the Playwright MCP server.
 
+## Playwright Instances
+
+Two independent browser instances are available for parallel investigations.
+
+| Instance | Tool prefix | Screenshot dir | When to use |
+|----------|-------------|----------------|-------------|
+| Default (1) | `mcp__playwright__` | `/tmp/playwright-screenshots/` | Default — use when no instance is specified |
+| Second (2) | `mcp__playwright_2__` | `/tmp/playwright-screenshots-2/` | Use when the user says "second instance" |
+
+**How to pick:** If the user invokes this skill without mentioning an instance,
+use instance 1 (`mcp__playwright__` prefix). If they say "second instance",
+use instance 2 (`mcp__playwright_2__` prefix). Throughout the rest of this
+document, tool names are shown without a prefix — prepend the correct prefix
+for whichever instance you are using.
+
+Each instance has its own browser process and page state, so they do not
+interfere with each other. You can run two agents in parallel, each on a
+different instance, investigating different apps or URLs simultaneously.
+
 ## Setup (devcontainer)
 
 The devcontainer Dockerfile already installs Chromium and creates the necessary
@@ -180,8 +199,10 @@ console output directly — no extra plumbing needed.
 | `browser_fill_form`       | Fill multiple form fields at once        |
 | `browser_select_option`   | Select dropdown option                   |
 
-All tools are prefixed with `mcp__playwright__` when called via the MCP
-integration (e.g. `mcp__playwright__browser_take_screenshot`).
+All tools are prefixed with the instance prefix when called via the MCP
+integration. Instance 1: `mcp__playwright__browser_take_screenshot`.
+Instance 2: `mcp__playwright_2__browser_take_screenshot`. See
+**Playwright Instances** at the top for how to pick.
 
 ## Tips
 

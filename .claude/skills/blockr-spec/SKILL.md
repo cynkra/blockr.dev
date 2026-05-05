@@ -49,7 +49,7 @@ The current phase is the next one after the last completed file:
 
 This is your most important job. Rules:
 
-- **Do not jump ahead.** If the user starts talking about implementation during the requirements phase, push back: "We're still on requirements — let's finish that first."
+- **Do not jump ahead.** If the user starts talking about implementation during the design phase, push back: "We're still on design — let's finish that first."
 - **Do not create files for later phases.** Only write the file for the current phase when it's done.
 - **Resist the urge to solve.** Your instinct is to jump to solutions. Fight it. Keep the conversation on the current phase.
 - **Allow brief forward references.** It's fine to note "we'll address that in design" — just don't start doing design work.
@@ -62,8 +62,8 @@ Each phase follows this pattern:
 
 Ask a guiding question appropriate to the phase. Examples:
 
-- **Motivation:** "What's the problem we're trying to solve? What keeps happening that we want to change?"
-- **Requirements:** "Given the motivation, what must be true when we're done? What are the constraints?"
+- **Motivation:** "What's the motivation? Why are we doing this?"
+- **Requirements:** "What must be true when we're done? What are the constraints?"
 - **Design:** "How should we approach this? What options do we have?"
 - **Implementation:** "Let's get specific. What files, data structures, and edge cases do we need to cover?"
 
@@ -81,10 +81,10 @@ After writing, ask if the user wants to continue to the next phase or stop here.
 
 ## Phase purposes
 
-These define what each phase covers and what the document should capture:
+These define what each phase covers and what the document should capture. All four phases should be roughly equal in scope — none should dominate.
 
-- **Motivation (1):** Why are we doing this? What's broken? What do we want? The document should make someone who wasn't in the conversation understand the problem.
-- **Requirements (2):** What must be true when we're done? Constraints, scope, non-goals. Not "how" — just "what."
+- **Motivation (1):** Why are we doing this? What's the current situation? What's broken or missing? The document should make someone who wasn't in the conversation understand the problem and why it matters.
+- **Requirements (2):** What must be true when we're done? Success criteria, constraints, scope, non-goals. Separate from motivation so the "why" and the "what" are each clearly stated.
 - **Design (3):** How do we get there? Options considered, trade-offs, the decision. If there are multiple viable approaches, create `3-design-<option>.md` files instead of a single `3-design.md`.
 - **Implementation (4):** Detailed enough to code from. File paths, data structures, edge cases. This is the last spec document — the next step is actual code.
 
@@ -94,7 +94,7 @@ These define what each phase covers and what the document should capture:
 - **Title format:** `# <Topic> — <Phase>` (e.g., `# Shared Config — Motivation`).
 - **Write from the conversation.** Capture what was actually discussed, not a generic treatment of the topic.
 - **Create the folder if needed.** If this is a new topic, create `blockr.design/open/<topic>/` before writing the first file.
-- **Phases 1–3: keep concise.** These are short documents — a few paragraphs, not essays. State the point and move on. Save detail for phase 4.
+- **Keep all phases concise and balanced.** Each phase is a few paragraphs, not an essay. Phase 4 includes code references and file paths but should not be dramatically longer than the others.
 - **Phase 4: link to reference code.** Include file paths and line numbers to existing implementations, prototypes, or patterns being reused. If screenshots or mockups exist, reference or store them in the spec folder.
 - **No LLM voice.** Write plainly. No "This is critical because...", no "It's worth noting that...", no rhetorical buildup. Just say the thing.
 
@@ -104,7 +104,7 @@ When the topic folder already has files:
 
 1. Read all existing phase files to understand the full context.
 2. Start the conversation at the next incomplete phase.
-3. Reference prior decisions naturally: "The motivation mentions X, and the requirements call for Y. Now let's figure out how to do that."
+3. Reference prior decisions naturally: "The motivation doc mentions X, and the requirements call for Y. Now let's figure out how to do that."
 
 ## Artifacts
 
@@ -119,8 +119,9 @@ Spec folders can hold artifacts (screenshots, code examples, CSS, mockups) along
 The user decides how many phases a topic needs:
 
 - Trivial change: skip the skill entirely.
-- Small feature: motivation + design, stop after phase 3.
-- Medium/large feature: all four phases.
+- Small feature: motivation + requirements, stop after phase 2.
+- Medium feature: motivation + requirements + design, stop after phase 3.
+- Large feature: all four phases.
 
 When the user says they're done after any phase, respect that. Don't push for more phases than the topic warrants.
 
