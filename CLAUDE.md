@@ -2,7 +2,15 @@
 
 Workspace containing all blockr ecosystem packages. See [blockr.site](https://blockr-org.github.io/blockr.site/) for documentation.
 
-Design specs live in `blockr.design/` (see `/blockr-spec` skill). Per-package dev docs are in each package's `dev/` folder.
+Design specs live in `_blockr.design/` (the local clone of `cynkra/blockr.design`, checked out with a leading underscore so it sorts to the top of the workspace — see `/blockr-spec` skill). Per-package dev docs are in each package's `dev/` folder.
+
+## Handover
+
+Cross-session / cross-container handoff goes through one file:
+`_scratch/handover/HANDOVER.md` (same file at `/workspace/_scratch/handover/HANDOVER.md`
+inside the devcontainer — the workspace is bind-mounted). Say **"prepare handover"**
+to write the current state there, **"pick handover"** to resume from it. Procedure:
+`/blockr-handoff` skill.
 
 ## Rules
 

@@ -2,12 +2,12 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
   "enabledPlugins": {
     "playwright@claude-plugins-official": true
   },
   "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
   "theme": "light",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "agentPushNotifEnabled": true
 }
